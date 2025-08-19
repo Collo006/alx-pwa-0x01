@@ -2,39 +2,42 @@
 import favicons from "favicons";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 
-const source = "public/logo.png"; // your base logo (at least 512x512 recommended)
+const source = "public/logo.png"; // at least 512x512
 
 const configuration = {
-  path: "/icons/", // public URL prefix
+  path: "/icons/",
   icons: {
-    android: [{sizes:[192]}],
-    appleIcon: [{sizes: [152]}],
-    windows: [{sizes: [310]}],
-    favicons: true,
+    android: true,
+    appleIcon: true,
+    windows: true,
+    favicons: false,
   },
 };
 
 const outputDir = "public/icons";
 
+// Map favicons output -> your desired filenames
+const renameMap = {
+  "android-chrome-192x192.png": "android-chrome-192x192.png",
+  "apple-touch-icon-152x152.png": "apple-icon-152x152.png",
+  "mstile-310x310.png": "ms-icon-310x310.png",
+};
+
 try {
-  // Ensure icons directory exists
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true });
   }
 
   const response = await favicons(source, configuration);
 
-  // Save images
   response.images.forEach((image) => {
-    writeFileSync(`${outputDir}/${image.name}`, image.contents);
+    if (renameMap[image.name]) {
+      const targetName = renameMap[image.name];
+      writeFileSync(`${outputDir}/${targetName}`, image.contents);
+    }
   });
 
-  // Save files (manifest, browserconfig, etc.)
-  response.files.forEach((file) => {
-    writeFileSync(`public/${file.name}`, file.contents);
-  });
-
-  console.log("✅ Icons and manifest generated successfully!");
+  console.log("✅ Exact icons generated successfully!");
 } catch (err) {
   console.error("❌ Error generating icons:", err.message);
 }
