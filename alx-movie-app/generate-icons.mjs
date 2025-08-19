@@ -7,9 +7,9 @@ const source = "public/logo.png"; // your base logo (at least 512x512 recommende
 const configuration = {
   path: "/icons/", // public URL prefix
   icons: {
-    android: true,
-    appleIcon: true,
-    windows: true,
+    android: [{sizes:[192]}],
+    appleIcon: [{sizes: [152]}],
+    windows: [{sizes: [310]}],
     favicons: true,
   },
 };
